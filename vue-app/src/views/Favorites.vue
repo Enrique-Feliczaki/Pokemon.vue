@@ -29,9 +29,9 @@ import { favoriteStore } from '../store/favorites';  // Importar o store de favo
   cursor: pointer;
 }
 h2, p{
-  color: rgb(48, 186, 211);
+  color: rgb(135, 91, 148);
 }
 img{
-  background-color:rgb(66, 212, 144) ;
+  background-color:rgb(153, 102, 140) ;
 }
 </style>

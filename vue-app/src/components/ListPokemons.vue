@@ -19,7 +19,7 @@ const isFavorite = () => {
 
 <template>
   <div class="col-5 col-md-6 col-xl-3">
-    <div class="card p-2 mb-3 cardListPokemon">
+    <div class="card p-15 mb-3 cardListPokemon">
       <p class="text-center">{{ name }}</p>
       <img :src="urlBaseSvg" class="card-img-top" alt="..." height="80" />
 

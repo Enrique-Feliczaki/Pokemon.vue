@@ -8,12 +8,45 @@ let pokemons = reactive(ref());
 let searchPokemonField = ref("")
 let pokemonSelected = reactive(ref());
 let loading = ref(false)
+let currentPage = ref(1);
+let totalPokemons = ref(0);
+const pokemonsPerPage = 20; 
 
-onMounted(()=>{
-  fetch("https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
-  .then(res => res.json())
-  .then(res => pokemons.value = res.results);
-})
+onMounted(() => {
+  fetch("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0")
+    .then(res => res.json())
+    .then(res => {
+      pokemons.value = res.results;
+      totalPokemons.value = res.count; 
+    });
+});
+
+const calculateOffset = () => {
+  return (currentPage.value - 1) * pokemonsPerPage;
+};
+
+const nextPage = () => {
+  if (currentPage.value * pokemonsPerPage < totalPokemons.value) {
+    currentPage.value++;
+    fetchPokemons();
+  }
+};
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    fetchPokemons();
+  }
+};
+
+const fetchPokemons = () => {
+  loading.value = true;
+  fetch(`https://pokeapi.co/api/v2/pokemon?limit=${pokemonsPerPage}&offset=${calculateOffset()}`)
+    .then(res => res.json())
+    .then(res => pokemons.value = res.results)
+    .catch(err => alert(err))
+    .finally(() => loading.value = false);
+};
 
 const pokemonsFiltered = computed(()=>{
   if(pokemons.value && searchPokemonField.value){
@@ -84,6 +117,12 @@ const selectPokemon = async (pokemon) => {
               :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'"
               @click="selectPokemon(pokemon)"
               />
+
+              <div class="pagination">
+                <button @click="previousPage" :disabled="currentPage === 1">Anterior</button>
+                <span>Página {{ currentPage }}</span>
+                <button @click="nextPage" :disabled="currentPage * pokemonsPerPage >= totalPokemons">Próxima</button>
+              </div>
             </div>
           </div>
         </div>
@@ -104,5 +143,9 @@ const selectPokemon = async (pokemon) => {
   .card-list{
     max-height: 48vh;
   }
+}
+.pagination{
+  display: flex;
+  justify-content: center;
 }
 </style>
